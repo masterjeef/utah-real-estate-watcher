@@ -27,20 +27,20 @@ namespace UtahRealEstateWatcher.Readers
 
             do {
                 
-                pageList = GetListings(pagination).ToList();
-
+                pageList = GetListingsFromPage(pagination).ToList();
+                
                 Thread.Sleep(100);
 
                 pagination.Page++;
 
                 listings.AddRange(pageList);
-
+                
             } while (pageList.Count > 0) ;
 
-                return listings;
+            return listings;
         }
 
-        private IEnumerable<string> GetListings(Pagination pagination)
+        private IEnumerable<string> GetListingsFromPage(Pagination pagination)
         {
             var content = GetContent(pagination);
 
