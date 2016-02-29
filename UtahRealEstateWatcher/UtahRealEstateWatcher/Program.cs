@@ -13,7 +13,7 @@ namespace UtahRealEstateWatcher
                 Criteria = new SearchCriteria
                 {
                     City = "Lehi",
-                    MinPrice = 225000,
+                    MinPrice = 200000,
                     MaxPrice = 275000
                 }
             };

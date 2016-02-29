@@ -12,7 +12,13 @@ namespace UtahRealEstateWatcher.Readers
     public class UtahRealEstateReader
     {
 
-        private readonly Uri _uri = new Uri("http://www.utahrealestate.com");
+        private const int getNextPageDelay = 200;
+
+        private const string host = "www.utahrealestate.com";
+        private const string userAgent = "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/48.0.2564.116 Safari/537.36";
+        private const string language = "en-US,en;q=0.8";
+
+        private readonly Uri _uri = new Uri(string.Format("http://{0}", host));
 
         private readonly RestClient _restClient;
 
@@ -22,15 +28,16 @@ namespace UtahRealEstateWatcher.Readers
         {
             _restClient = new RestClient(_uri);
             _restClient.CookieContainer = new CookieContainer();
-            _restClient.UserAgent = "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/48.0.2564.116 Safari/537.36";
+            _restClient.UserAgent = userAgent;
             _restClient.AddDefaultHeader("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8");
-            _restClient.AddDefaultHeader("Accept-Language", "en-US,en;q=0.8");
+            _restClient.AddDefaultHeader("Accept-Language", language);
 
             var request = new RestRequest("index/public.index", Method.GET);
             
             var response = _restClient.Execute(request);
 
-            _restClient.CookieContainer.Add(new Cookie("ureBrowserSession", DateTime.Now.Ticks.ToString(), "/", "www.utahrealestate.com"));
+            var browserSession = new Cookie("ureBrowserSession", DateTime.Now.Ticks.ToString(), "/", host);
+            _restClient.CookieContainer.Add(browserSession);
         }
 
         public SearchCriteria Criteria {
@@ -60,17 +67,19 @@ namespace UtahRealEstateWatcher.Readers
                 "accuracy=4&" +
                 "geocoded={0}&" +
                 "state=UT&" +
-                "box=%257B%2522north%2522%253A40.471736%252C%2522south%2522%253A40.356205%252C%2522east%2522%253A-111.81881799999996%252C%2522west%2522%253A-111.91877299999999%257D&" +
+                "box=&" +
                 "htype=city&" +
-                "lat=40.3916172&lng=-111.85076620000001&" +
+                "lat=&" + 
+                "lng=&" +
                 "selected_listno=&" +
                 "listnoSearch=&" +
                 "proptype=&" +
-                "listprice1=&" +
-                "listprice2=&" +
+                "listprice1={1}&" +
+                "listprice2={2}&" +
                 "tot_bed1=&" +
                 "tot_bath1=&" +
-                "tot_sqf1=", criteria.City);
+                "tot_sqf1=",
+                criteria.City, criteria.MinPrice, criteria.MaxPrice);
 
             request.AddParameter("application/x-www-form-urlencoded", body, ParameterType.RequestBody);
 
@@ -89,7 +98,7 @@ namespace UtahRealEstateWatcher.Readers
                 
                 pageList = GetListingsFromPage(pagination).ToList();
                 
-                Thread.Sleep(100);
+                Thread.Sleep(getNextPageDelay);
 
                 pagination.Page++;
 
@@ -142,15 +151,15 @@ namespace UtahRealEstateWatcher.Readers
                 "accuracy=4&" +
                 "geocoded={0}&" +
                 "state=UT&" +
-                "box=%257B%2522north%2522%253A40.471736%252C%2522south%2522%253A40.356205%252C%2522east%2522%253A-111.81881799999996%252C%2522west%2522%253A-111.91877299999999%257D&" +
+                "box=&" +
                 "htype=city&" +
-                "lat=40.3916172&" +
-                "lng=-111.85076620000001&" +
+                "lat=&" +
+                "lng=&" +
                 "selected_listno=&" +
                 "type=1&" +
                 "geolocation={0}&" +
-                "listprice1=&" +
-                "listprice2=&" +
+                "listprice1={1}&" +
+                "listprice2={2}&" +
                 "tot_bed1=&" +
                 "tot_bath1=&" +
                 "proptype=&" +
@@ -203,7 +212,8 @@ namespace UtahRealEstateWatcher.Readers
                 "o_coord_ns1," +
                 "o_coord_ns2," +
                 "o_coord_ew1," +
-                "o_coord_ew2", Criteria.City);
+                "o_coord_ew2",
+                Criteria.City, Criteria.MinPrice, Criteria.MaxPrice);
 
             request.AddParameter("application/x-www-form-urlencoded", body, ParameterType.RequestBody);
 
