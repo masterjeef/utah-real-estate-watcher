@@ -15,6 +15,8 @@ namespace UtahRealEstateWatcher.Readers
         private readonly Uri _uri = new Uri("http://www.utahrealestate.com");
 
         private readonly RestClient _restClient;
+
+        private SearchCriteria _criteria;
         
         public UtahRealEstateReader()
         {
@@ -27,9 +29,55 @@ namespace UtahRealEstateWatcher.Readers
             var request = new RestRequest("index/public.index", Method.GET);
             
             var response = _restClient.Execute(request);
+
+            _restClient.CookieContainer.Add(new Cookie("ureBrowserSession", DateTime.Now.Ticks.ToString(), "/", "www.utahrealestate.com"));
         }
-        
-        public SearchCriteria Criteria { get; set; }
+
+        public SearchCriteria Criteria {
+            get
+            {
+                return _criteria;
+            }
+            set
+            {
+                var postSuccess = PostSearchCriteria(value);
+
+                if (postSuccess)
+                {
+                    _criteria = value;
+                }
+            }
+        }
+
+        private bool PostSearchCriteria(SearchCriteria criteria)
+        {
+            var request = new RestRequest("search/save.search.criteria", Method.POST);
+            request.AddHeader("Accept", "*/*");
+            request.AddHeader("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
+
+            var body = string.Format("type=1&" +
+                "geolocation={0}&" +
+                "accuracy=4&" +
+                "geocoded={0}&" +
+                "state=UT&" +
+                "box=%257B%2522north%2522%253A40.471736%252C%2522south%2522%253A40.356205%252C%2522east%2522%253A-111.81881799999996%252C%2522west%2522%253A-111.91877299999999%257D&" +
+                "htype=city&" +
+                "lat=40.3916172&lng=-111.85076620000001&" +
+                "selected_listno=&" +
+                "listnoSearch=&" +
+                "proptype=&" +
+                "listprice1=&" +
+                "listprice2=&" +
+                "tot_bed1=&" +
+                "tot_bath1=&" +
+                "tot_sqf1=", criteria.City);
+
+            request.AddParameter("application/x-www-form-urlencoded", body, ParameterType.RequestBody);
+
+            var response = _restClient.Execute(request);
+
+            return response.ResponseStatus == ResponseStatus.Completed && response.StatusCode == HttpStatusCode.OK;
+        }
 
         public List<string> GetListings()
         {
