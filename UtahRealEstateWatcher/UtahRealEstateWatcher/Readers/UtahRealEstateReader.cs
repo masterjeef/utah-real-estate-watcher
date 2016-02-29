@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using RestSharp;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -11,19 +12,21 @@ namespace UtahRealEstateWatcher.Readers
     public class UtahRealEstateReader
     {
 
-        private const string url = "http://www.utahrealestate.com";
+        private readonly Uri _uri = new Uri("http://www.utahrealestate.com");
 
-        private RestClient _restClient = new RestClient(url);
+        private readonly RestClient _restClient;
         
         public UtahRealEstateReader()
         {
+            _restClient = new RestClient(_uri);
             _restClient.CookieContainer = new CookieContainer();
+            _restClient.UserAgent = "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/48.0.2564.116 Safari/537.36";
+            _restClient.AddDefaultHeader("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8");
+            _restClient.AddDefaultHeader("Accept-Language", "en-US,en;q=0.8");
 
-            var request = new RestRequest(Method.GET);
-
-            request.AddHeader("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8");
-
-            _restClient.Execute(request);
+            var request = new RestRequest("index/public.index", Method.GET);
+            
+            var response = _restClient.Execute(request);
         }
         
         public SearchCriteria Criteria { get; set; }
@@ -31,9 +34,7 @@ namespace UtahRealEstateWatcher.Readers
         public List<string> GetListings()
         {
             var listings = new List<string>();
-
             var pagination = new Pagination();
-
             var pageList = new List<string>();
             
             do {
@@ -76,7 +77,8 @@ namespace UtahRealEstateWatcher.Readers
             request.AddHeader("Accept", "application/json, text/javascript, */*; q=0.01");
             request.AddHeader("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
             
-            var body = string.Format("param=city&value={0}&" +
+            var body = string.Format("param=city&" + 
+                "value={0}&" +
                 "param_reset=county_code," +
                 "o_county_code," +
                 "city," +
