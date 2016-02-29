@@ -14,15 +14,15 @@ namespace UtahRealEstateWatcher
                 {
                     City = "Lehi",
                     MinPrice = 200000,
-                    MaxPrice = 275000
+                    MaxPrice = 280000
                 }
             };
 
             var listings = listingReader.GetListings();
             
-            foreach (var mls in listings)
+            foreach (var listing in listings)
             {
-                Console.WriteLine("MLS : {0}", mls);
+                Console.WriteLine("MLS : {0}", listing.Mls);
             }
 
             Console.WriteLine("{0} total listings", listings.Count);

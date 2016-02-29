@@ -54,7 +54,7 @@
   <ItemGroup>
     <Compile Include="Models\Pagination.cs" />
     <Compile Include="Models\SearchCriteria.cs" />
-    <Compile Include="Models\UreCookie.cs" />
+    <Compile Include="Models\UreListing.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Readers\UtahRealEstateReader.cs" />

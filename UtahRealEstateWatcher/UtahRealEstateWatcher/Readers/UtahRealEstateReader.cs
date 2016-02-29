@@ -88,11 +88,11 @@ namespace UtahRealEstateWatcher.Readers
             return response.ResponseStatus == ResponseStatus.Completed && response.StatusCode == HttpStatusCode.OK;
         }
 
-        public List<string> GetListings()
+        public List<UreListing> GetListings()
         {
-            var listings = new List<string>();
+            var listings = new List<UreListing>();
             var pagination = new Pagination();
-            var pageList = new List<string>();
+            var pageList = new List<UreListing>();
             
             do {
                 
@@ -109,7 +109,7 @@ namespace UtahRealEstateWatcher.Readers
             return listings;
         }
 
-        private IEnumerable<string> GetListingsFromPage(Pagination pagination)
+        private IEnumerable<UreListing> GetListingsFromPage(Pagination pagination)
         {
             var content = GetContent(pagination);
 
@@ -122,7 +122,13 @@ namespace UtahRealEstateWatcher.Readers
             
             foreach (dynamic listing in json.listing_data)
             {
-                yield return listing.listno;
+                var mls = listing.listno;
+                var ureListing = new UreListing
+                {
+                    Mls = mls,
+                    Url = string.Format("http://{0}/{1}", host, mls)
+                };
+                yield return ureListing;
             }
         }
 
