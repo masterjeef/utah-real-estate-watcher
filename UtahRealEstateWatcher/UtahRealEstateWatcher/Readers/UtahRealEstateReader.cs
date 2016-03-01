@@ -123,12 +123,16 @@ namespace UtahRealEstateWatcher.Readers
             foreach (dynamic listing in json.listing_data)
             {
                 var mls = listing.listno;
+                var url = string.Format("http://{0}/{1}", host, mls);
+
                 var ureListing = new UreListing
                 {
                     Mls = mls,
-                    Url = string.Format("http://{0}/{1}", host, mls),
-                    City = Criteria.City
+                    Url = url,
+                    City = Criteria.City,
+                    Html = string.Format("<p><a href=\"{0}\" target=\"_blank\">MLS# {1}</a> ({2})</p>", url, mls, Criteria.City)
                 };
+
                 yield return ureListing;
             }
         }

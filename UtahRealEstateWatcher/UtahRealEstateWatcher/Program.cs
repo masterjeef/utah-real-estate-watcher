@@ -55,9 +55,9 @@ namespace UtahRealEstateWatcher
             var newListings = listings.Except(listingsFromFile).ToList();
 
             Console.WriteLine("{0} new listings found.", newListings.Count);
+            
+            var listingHtml = string.Join("\n", newListings.Select(x => x.Html));
 
-            var listingLinks = newListings.Select(x => string.Format("<p><a href=\"{0}\" target=\"_blank\">MLS# {1}</a> ({2})</p>", x.Url, x.Mls, x.City));
-            var listingHtml = string.Join("\n", listingLinks);
             var html = string.Format("<html><head><title>New Listings</title></head><body><h1>{0} New Listings</h1>{1}</body></html>", newListings.Count, listingHtml);
 
             var htmlPath = string.Format("{0}.html", DateTime.Now.Ticks);
