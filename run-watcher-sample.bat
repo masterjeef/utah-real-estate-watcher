@@ -1,0 +1,1 @@
+UtahRealEstateWatcher "Herriman;Lehi;Draper;Saratoga Springs;Riverton;South Jordan" 200000 280000

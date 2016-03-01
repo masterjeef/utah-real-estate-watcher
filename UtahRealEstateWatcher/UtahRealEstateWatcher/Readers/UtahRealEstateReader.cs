@@ -126,7 +126,8 @@ namespace UtahRealEstateWatcher.Readers
                 var ureListing = new UreListing
                 {
                     Mls = mls,
-                    Url = string.Format("http://{0}/{1}", host, mls)
+                    Url = string.Format("http://{0}/{1}", host, mls),
+                    City = Criteria.City
                 };
                 yield return ureListing;
             }
