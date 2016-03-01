@@ -19,7 +19,8 @@ namespace UtahRealEstateWatcher
         {
             if (args.Length < 1)
             {
-                Console.WriteLine("No cities specified");
+                Console.WriteLine("No cities specified. Press any key to close.");
+                Console.ReadLine();
                 return;
             }
 
