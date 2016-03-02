@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using HtmlAgilityPack;
+using Newtonsoft.Json;
 using RestSharp;
 using System;
 using System.Collections.Generic;
@@ -119,18 +120,23 @@ namespace UtahRealEstateWatcher.Readers
             }
 
             dynamic json = JsonConvert.DeserializeObject(content);
-            
+
+            var document = new HtmlDocument();
+            document.LoadHtml(json.html.Value);
+
             foreach (dynamic listing in json.listing_data)
             {
                 var mls = listing.listno;
+                var selector = string.Format("//div[@id='mls-inline-{0}']", mls);
                 var url = string.Format("http://{0}/{1}", host, mls);
+                var moreDetails = string.Format("<p class=\"more-details\"><a href=\"{0}\" target=\"_blank\">More Details</a></p>", url);
 
                 var ureListing = new UreListing
                 {
                     Mls = mls,
                     Url = url,
                     City = Criteria.City,
-                    Html = string.Format("<p><a href=\"{0}\" target=\"_blank\">MLS# {1}</a> ({2})</p>", url, mls, Criteria.City)
+                    Html = document.DocumentNode.SelectSingleNode(selector).InnerHtml + moreDetails
                 };
 
                 yield return ureListing;
