@@ -1,0 +1,6 @@
+﻿.listing-container-handheld, 
+.inline_agent,
+.inline_brokerage,
+.listing-container-handheld {
+    display:none;
+}

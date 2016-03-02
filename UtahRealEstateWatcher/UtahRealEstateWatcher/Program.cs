@@ -13,6 +13,8 @@ namespace UtahRealEstateWatcher
     {
         private const string lastRunFileName = "LastRun.json";
 
+        private const string stylesPath = "Assets/css/styles.css";
+
         private static UtahRealEstateFileReader UreFileReader = new UtahRealEstateFileReader(lastRunFileName);
 
         static void Main(string[] args)
@@ -59,7 +61,8 @@ namespace UtahRealEstateWatcher
             
             var listingHtml = string.Join("\n", newListings.Select(x => x.Html));
 
-            var html = string.Format("<html><head><title>New Listings</title></head><body><h1>{0} New Listings</h1>{1}</body></html>", newListings.Count, listingHtml);
+            var styles = string.Format("<link type=\"text/css\" rel=\"stylesheet\" href=\"{0}\">", stylesPath);
+            var html = string.Format("<html><head><title>New Listings</title>{2}</head><body><h1>{0} New Listings</h1>{1}</body></html>", newListings.Count, listingHtml, styles);
 
             var htmlPath = string.Format("{0}.html", DateTime.Now.Ticks);
 
