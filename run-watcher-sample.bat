@@ -5,6 +5,12 @@
 
 SET exePath=UtahRealEstateWatcher/UtahRealEstateWatcher/bin/Debug
 
+SET minPrice=200000
+
+SET maxPrice=280000
+
+SET cities="Herriman;Lehi;Draper;Saratoga Springs;Riverton;South Jordan"
+
 cd %exePath%
 
-UtahRealEstateWatcher "Herriman;Lehi;Draper;Saratoga Springs;Riverton;South Jordan" 200000 280000
+UtahRealEstateWatcher %cities% %minPrice% %maxPrice%
