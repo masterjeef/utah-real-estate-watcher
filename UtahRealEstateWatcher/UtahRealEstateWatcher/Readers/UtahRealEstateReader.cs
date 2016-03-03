@@ -127,16 +127,16 @@ namespace UtahRealEstateWatcher.Readers
             foreach (dynamic listing in json.listing_data)
             {
                 var mls = listing.listno;
-                var selector = string.Format("//div[@id='mls-inline-{0}']", mls);
                 var url = string.Format("http://{0}/{1}", host, mls);
-                var moreDetails = string.Format("<p class=\"more-details\"><a href=\"{0}\" target=\"_blank\">More Details</a></p>", url);
+                var seeMore = string.Format("<div class=\"more-details\"><a href=\"{0}\" target=\"_blank\">See More</a></div>", url);
+                var node = document.DocumentNode.SelectSingleNode(string.Format("//div[@id='mls-inline-{0}']", mls));
 
                 var ureListing = new UreListing
                 {
                     Mls = mls,
                     Url = url,
                     City = Criteria.City,
-                    Html = document.DocumentNode.SelectSingleNode(selector).InnerHtml + moreDetails
+                    Html = string.Format("<div class=\"ure-listing\">\n{0}\n{1}\n</div>", node.InnerHtml, seeMore)
                 };
 
                 yield return ureListing;

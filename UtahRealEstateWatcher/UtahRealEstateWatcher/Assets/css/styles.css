@@ -4,3 +4,45 @@
 .listing-container-handheld {
     display:none;
 }
+
+body {
+    font-family:arial, sans-serif;
+    color:#444;
+    text-align:left;
+}
+
+a {
+    text-decoration:none;
+}
+
+.main {
+    width:1000px;
+    margin:0 auto;
+}
+
+.main > * {
+    padding:10px;
+    margin:15px;
+    text-align:center;
+}
+
+.more-details {
+    padding:15px;
+    text-align:center;
+    font-size:1.2em;
+}
+
+.more-details a:link,
+.more-details a:visited {
+    color:#2592E8;
+}
+
+.more-details a:hover,
+.more-details a:active {
+    color:#28D9FF;
+}
+
+.ure-listing {
+    display:inline-block;
+    text-align: left;
+}
