@@ -128,7 +128,7 @@ namespace UtahRealEstateWatcher.Readers
             {
                 var mls = listing.listno;
                 var url = string.Format("http://{0}/{1}", host, mls);
-                var seeMore = string.Format("<div class=\"more-details\"><a href=\"{0}\" target=\"_blank\">See More</a></div>", url);
+                var seeMore = string.Format("<div class=\"see-more\"><a href=\"{0}\" class=\"btn\" target=\"_blank\">see more</a></div>", url);
                 var node = document.DocumentNode.SelectSingleNode(string.Format("//div[@id='mls-inline-{0}']", mls));
 
                 var ureListing = new UreListing

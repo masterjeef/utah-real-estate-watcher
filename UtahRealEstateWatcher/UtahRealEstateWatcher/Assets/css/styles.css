@@ -7,8 +7,13 @@
 
 body {
     font-family:arial, sans-serif;
-    color:#444;
+    color:#777;
     text-align:left;
+    line-height:1.5em
+}
+
+h1, h2, h3, h4, h5 {
+    color:#555;
 }
 
 a {
@@ -16,7 +21,7 @@ a {
 }
 
 .main {
-    width:1000px;
+    width:1024px;
     margin:0 auto;
 }
 
@@ -26,23 +31,45 @@ a {
     text-align:center;
 }
 
-.more-details {
+.see-more {
+    margin:15px;
     padding:15px;
     text-align:center;
     font-size:1.2em;
+    color:#000;
 }
 
-.more-details a:link,
-.more-details a:visited {
-    color:#2592E8;
+.see-more .btn {
+    padding:12px 17px;
+    background-color:#2592E8;
+    color:#FFF;
+    border-radius: 22px;
 }
 
-.more-details a:hover,
-.more-details a:active {
-    color:#28D9FF;
+.see-more a.btn:link,
+.see-more a.btn:visited {
+    background-color:#2592E8;
+}
+
+.see-more a.btn:hover,
+.see-more a.btn:active {
+    background-color:#79B6E6;
 }
 
 .ure-listing {
     display:inline-block;
     text-align: left;
+}
+
+.listing-wrapper-cell img {
+    border:4px solid #EEE;
+}
+
+.inline_info h3 {
+    padding-bottom:15px;
+    border-bottom:1px solid #DDD;
+}
+
+.list-info-content {
+    text-transform:uppercase;
 }
