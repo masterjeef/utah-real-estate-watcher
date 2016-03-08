@@ -63,7 +63,7 @@ namespace UtahRealEstateWatcher
             var allListingsHtml = string.Join("\n", listings.Select(x => x.Html));
 
             var styles = string.Format("<link type=\"text/css\" rel=\"stylesheet\" href=\"{0}\">", stylesPath);
-            var html = string.Format("<html><head><title>New Listings</title>{2}</head><body><div class=\"main\"><h1>{0} New Listings</h1>{1}<h1>All {4} Listings</h1>{3}</div></body></html>", newListings.Count, newListingsHtml, styles, allListingsHtml, listings.Count);
+            var html = string.Format("<html><head><title>New Listings</title>{2}</head><body><div class=\"main\"><h1>{0} New Listings</h1>{1}<hr><h1>All {4} Listings</h1>{3}</div></body></html>", newListings.Count, newListingsHtml, styles, allListingsHtml, listings.Count);
 
             var htmlPath = string.Format("{0}.html", DateTime.Now.Ticks);
 

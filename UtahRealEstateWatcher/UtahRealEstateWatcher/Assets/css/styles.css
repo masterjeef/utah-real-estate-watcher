@@ -1,4 +1,6 @@
-﻿.listing-container-handheld, 
+﻿@import url(https://fonts.googleapis.com/css?family=Open+Sans);
+
+.listing-container-handheld, 
 .inline_agent,
 .inline_brokerage,
 .listing-container-handheld {
@@ -6,7 +8,7 @@
 }
 
 body {
-    font-family:arial, sans-serif;
+    font-family:'Open Sans', sans-serif;
     color:#777;
     text-align:left;
     line-height:1.5em
@@ -72,4 +74,10 @@ a {
 
 .list-info-content {
     text-transform:uppercase;
+}
+
+.main hr {
+    padding:0;
+    margin:35px 0;
+    border:1px solid #EEE;
 }
