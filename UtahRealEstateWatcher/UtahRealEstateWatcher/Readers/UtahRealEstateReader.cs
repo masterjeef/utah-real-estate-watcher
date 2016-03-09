@@ -16,7 +16,9 @@ namespace UtahRealEstateWatcher.Readers
         private const int getNextPageDelay = 200;
 
         private const string host = "www.utahrealestate.com";
+
         private const string userAgent = "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/48.0.2564.116 Safari/537.36";
+
         private const string language = "en-US,en;q=0.8";
 
         private readonly Uri _uri = new Uri(string.Format("http://{0}", host));
@@ -160,7 +162,8 @@ namespace UtahRealEstateWatcher.Readers
                 "zip," +
                 "o_zip," +
                 "geometry," +
-                "o_geometry&chain=saveLocation," +
+                "o_geometry&" + 
+                "chain=saveLocation," +
                 "criteriaAndCountAction," +
                 "mapInlineResultsAction&" +
                 "tx=true&" +
