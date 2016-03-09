@@ -6,6 +6,7 @@ using System.IO;
 using Newtonsoft.Json;
 using System.Linq;
 using System.Diagnostics;
+using EasyArgs;
 
 namespace UtahRealEstateWatcher
 {
@@ -19,16 +20,20 @@ namespace UtahRealEstateWatcher
 
         static void Main(string[] args)
         {
-            if (args.Length < 1)
+            var easyArgs = new Args(args);
+
+            var citiesArg = easyArgs["Cities"];
+
+            if (citiesArg == null)
             {
                 Console.WriteLine("No cities specified. Press any key to close.");
                 Console.ReadLine();
                 return;
             }
 
-            var cities = args[0].Split(';');
-            var minPrice = getIntArg(args, 1);
-            var maxPrice = getIntArg(args, 2);
+            var cities = citiesArg.Split(';');
+            var minPrice = int.Parse(easyArgs["MinPrice"]);
+            var maxPrice = int.Parse(easyArgs["MaxPrice"]);
 
             var listings = new List<UreListing>();
             var reader = new UtahRealEstateReader();
@@ -49,16 +54,17 @@ namespace UtahRealEstateWatcher
                 listings.AddRange(reader.GetListings());
             }
 
-            Console.WriteLine("{0} total listings found.", listings.Count);
-
             var listingsFromFile = UreFileReader.GetListings();
 
             WriteListingsToFile(listings, lastRunFileName);
 
+            if(easyArgs.HasFlag("d"))
+            {
+                File.Delete(lastRunFileName);
+            }
+
             var newListings = listings.Except(listingsFromFile).ToList();
 
-            Console.WriteLine("{0} new listings found.", newListings.Count);
-            
             var newListingsHtml = string.Join("\n", newListings.Select(x => x.Html));
             var allListingsHtml = string.Join("\n", listings.Select(x => x.Html));
 
@@ -72,17 +78,6 @@ namespace UtahRealEstateWatcher
             Process.Start(htmlPath);
         }
 
-        private static int getIntArg(string [] args, int index)
-        {
-            int value = 0;
-
-            if(args.Length > index)
-            {
-                value = int.Parse(args[index]);
-            }
-
-            return value;
-        }
 
         private static void WriteListingsToFile(List<UreListing> listings, string path)
         {
