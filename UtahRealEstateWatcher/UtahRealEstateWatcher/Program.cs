@@ -22,7 +22,7 @@ namespace UtahRealEstateWatcher
         {
             var easyArgs = new Args(args);
 
-            var citiesArg = easyArgs["Cities"];
+            var citiesArg = easyArgs["Cities"].Value;
 
             if (citiesArg == null)
             {
@@ -32,8 +32,8 @@ namespace UtahRealEstateWatcher
             }
 
             var cities = citiesArg.Split(';');
-            var minPrice = int.Parse(easyArgs["MinPrice"]);
-            var maxPrice = int.Parse(easyArgs["MaxPrice"]);
+            var minPrice = easyArgs["MinPrice"].AsInt();
+            var maxPrice = easyArgs["MaxPrice"].AsInt();
 
             var listings = new List<UreListing>();
             var reader = new UtahRealEstateReader();
