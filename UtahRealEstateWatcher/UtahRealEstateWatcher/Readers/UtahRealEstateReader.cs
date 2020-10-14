@@ -17,16 +17,16 @@ namespace UtahRealEstateWatcher.Readers
 
         private const string host = "www.utahrealestate.com";
 
-        private const string userAgent = "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/48.0.2564.116 Safari/537.36";
+        private const string userAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/85.0.4183.121 Safari/537.36";
 
-        private const string language = "en-US,en;q=0.8";
+        private const string language = "en-US,en;q=0.9";
 
-        private readonly Uri _uri = new Uri(string.Format("http://{0}", host));
+        private readonly Uri _uri = new Uri(string.Format("https://{0}", host));
 
         private readonly RestClient _restClient;
 
         private SearchCriteria _criteria;
-        
+
         public UtahRealEstateReader()
         {
             _restClient = new RestClient(_uri);
@@ -36,14 +36,15 @@ namespace UtahRealEstateWatcher.Readers
             _restClient.AddDefaultHeader("Accept-Language", language);
 
             var request = new RestRequest("index/public.index", Method.GET);
-            
+
             var response = _restClient.Execute(request);
 
             var browserSession = new Cookie("ureBrowserSession", DateTime.Now.Ticks.ToString(), "/", host);
             _restClient.CookieContainer.Add(browserSession);
         }
 
-        public SearchCriteria Criteria {
+        public SearchCriteria Criteria
+        {
             get
             {
                 return _criteria;
@@ -72,7 +73,7 @@ namespace UtahRealEstateWatcher.Readers
                 "state=UT&" +
                 "box=&" +
                 "htype=city&" +
-                "lat=&" + 
+                "lat=&" +
                 "lng=&" +
                 "selected_listno=&" +
                 "listnoSearch=&" +
@@ -96,18 +97,19 @@ namespace UtahRealEstateWatcher.Readers
             var listings = new List<UreListing>();
             var pagination = new Pagination();
             var pageList = new List<UreListing>();
-            
-            do {
-                
+
+            do
+            {
+
                 pageList = GetListingsFromPage(pagination).ToList();
-                
+
                 Thread.Sleep(getNextPageDelay);
 
                 pagination.Page++;
 
                 listings.AddRange(pageList);
-                
-            } while (pageList.Count > 0) ;
+
+            } while (pageList.Count > 0);
 
             return listings;
         }
@@ -131,7 +133,7 @@ namespace UtahRealEstateWatcher.Readers
                 var mls = listing.listno;
                 var url = string.Format("http://{0}/{1}", host, mls);
                 var seeMore = string.Format("<div class=\"see-more\"><a href=\"{0}\" class=\"btn\" target=\"_blank\">see more</a></div>", url);
-                var node = document.DocumentNode.SelectSingleNode(string.Format("//div[@id='mls-inline-{0}']", mls));
+                var node = document.DocumentNode.SelectSingleNode(string.Format("//li[@id='mls-inline-{0}']", mls));
 
                 var ureListing = new UreListing
                 {
@@ -147,41 +149,35 @@ namespace UtahRealEstateWatcher.Readers
 
         private string GetContent(Pagination pagination)
         {
-            var resource = string.Format("search/chained.update/count/true/criteria/false/pg/{0}/limit/{1}", pagination.Page, pagination.Limit);
-
+            var resource = $"search/chained.update/param_reset/county_code,o_county_code,city,o_city,zip,o_zip,geometry,o_geometry/count/false/criteria/false/pg/{pagination.Page}/limit/{pagination.Limit}/dh/500";
             var request = new RestRequest(resource, Method.POST);
             request.AddHeader("Accept", "application/json, text/javascript, */*; q=0.01");
             request.AddHeader("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
-            
-            var body = string.Format("param=city&" + 
-                "value={0}&" +
-                "param_reset=county_code," +
-                "o_county_code," +
-                "city," +
-                "o_city," +
-                "zip," +
-                "o_zip," +
-                "geometry," +
-                "o_geometry&" + 
-                "chain=saveLocation," +
-                "criteriaAndCountAction," +
-                "mapInlineResultsAction&" +
+
+            var body = "param=city&" +
+                $"value={Criteria.City}&" +
+                "chain=saveLocation,criteriaAndCountAction,mapInlineResultsAction&" +
                 "tx=true&" +
                 "all=1&" +
-                "accuracy=4&" +
-                "geocoded={0}&" +
+                "accuracy=100&" +
+                $"geocoded={Criteria.City.Replace(" ", " + ")}&" +
                 "state=UT&" +
-                "box=&" +
+                "box=%257B%2522east%2522%253A-111.8952693%252C%2522south%2522%253A40.536858%252C%2522north%2522%253A40.5821002%252C%2522west%2522%253A-112.0707875%257D&" +
                 "htype=city&" +
-                "lat=&" +
-                "lng=&" +
+                "lat=40.5621704&" +
+                "lng=-111.929658&" +
                 "selected_listno=&" +
                 "type=1&" +
-                "geolocation={0}&" +
-                "listprice1={1}&" +
-                "listprice2={2}&" +
+                $"geolocation={Criteria.City.Replace(" ", "+")}%2C+UT&" +
+                $"listprice1={Criteria.MinPrice}&" +
+                $"listprice2={Criteria.MaxPrice}&" +
                 "tot_bed1=&" +
                 "tot_bath1=&" +
+                "stat=1&" +
+                "stat=7&" +
+                "status=1%2C7&" +
+                "opens=&" +
+                "o_env_certification=32&" +
                 "proptype=&" +
                 "style=&" +
                 "o_style=4&" +
@@ -189,57 +185,22 @@ namespace UtahRealEstateWatcher.Readers
                 "dim_acres1=&" +
                 "yearblt1=&" +
                 "cap_garage1=&" +
-                "opens=&" +
-                "accessibility=&" +
+                "o_has_solar=1&" +
+                "o_seniorcommunity=1&" +
+                "o_has_hoa=1&" +
                 "o_accessibility=32&" +
                 "htype=city&" +
-                "hval={0}&" +
-                "loc={0}&" +
-                "accr=4&" +
-                "op=4&" +
+                $"hval={Criteria.City}&" +
+                $"loc={Criteria.City.Replace(" ", "+")},%20UT&" +
+                "accr=100&" +
                 "advanced_search=0&" +
-                "param_reset=housenum," +
-                "dir_pre," +
-                "street," +
-                "streettype," +
-                "dir_post," +
-                "city," +
-                "county_code," +
-                "zip," +
-                "area," +
-                "subdivision," +
-                "quadrant," +
-                "unitnbr1," +
-                "unitnbr2," +
-                "geometry," +
-                "coord_ns1," +
-                "coord_ns2," +
-                "coord_ew1," +
-                "coord_ew2," +
-                "housenum," +
-                "o_dir_pre," +
-                "o_street," +
-                "o_streettype," +
-                "o_dir_post," +
-                "o_city," +
-                "o_county_code," +
-                "o_zip,o_area," +
-                "o_subdivision," +
-                "o_quadrant," +
-                "o_unitnbr1," +
-                "o_unitnbr2," +
-                "o_geometry," +
-                "o_coord_ns1," +
-                "o_coord_ns2," +
-                "o_coord_ew1," +
-                "o_coord_ew2",
-                Criteria.City, Criteria.MinPrice, Criteria.MaxPrice);
-
+                "param_reset=housenum,dir_pre,street,streettype,dir_post,city,county_code,zip,area,subdivision,quadrant,unitnbr1,unitnbr2,geometry,coord_ns1,coord_ns2,coord_ew1,coord_ew2,housenum,o_dir_pre,o_street,o_streettype,o_dir_post,o_city,o_county_code,o_zip,o_area,o_subdivision,o_quadrant,o_unitnbr1,o_unitnbr2,o_geometry,o_coord_ns1,o_coord_ns2,o_coord_ew1,o_coord_ew2";
+            
             request.AddParameter("application/x-www-form-urlencoded", body, ParameterType.RequestBody);
 
             var response = _restClient.Execute(request);
 
-            if(response.ResponseStatus != ResponseStatus.Completed && response.StatusCode != HttpStatusCode.OK)
+            if (response.ResponseStatus != ResponseStatus.Completed && response.StatusCode != HttpStatusCode.OK)
             {
                 return null;
             }
